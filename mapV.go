@@ -26,7 +26,7 @@ type item struct {
 }
 
 // load data with loader
-func NewWithStdMapCache(notUsedExpiredDataAfterDur time.Duration, loader Loader) *StdMapCache {
+func NewWithStdMapCache(loader Loader, notUsedExpiredDataAfterDur time.Duration) *StdMapCache {
 	m := StdMapCache{loader: loader, notUsedExpiredDataAfterDur: notUsedExpiredDataAfterDur, items: map[string]item{}, sf: &singleflight.Group{}}
 	return &m
 }

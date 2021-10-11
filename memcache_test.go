@@ -107,7 +107,7 @@ func test(t *testing.T, c memcache.Cache) {
 
 // TestCache ...
 func TestStdMapVersion(t *testing.T) {
-	c := memcache.NewWithStdMapCache(time.Millisecond*20, memcache.LoaderFunc(load))
+	c := memcache.NewWithStdMapCache(memcache.LoaderFunc(load), time.Millisecond*20)
 	test(t, c)
 }
 
