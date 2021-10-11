@@ -27,7 +27,7 @@ func load(key string) (value interface{}, ttl time.Duration, err error) {
 ```
 ### golang std map version
 ```golang
-cache := memcache.NewWithStdMapCache(time.Millisecond*20, memcache.LoaderFunc(load))
+cache := memcache.NewWithStdMapCache(memcache.LoaderFunc(load),time.Millisecond*20)
 cache.SetWithTTL("item-2", &Item{100}, time.Millisecond*10)
 v, ok := cache.Get("item-2")
 ```
