@@ -70,6 +70,9 @@ func (m *RistrettoCache) update(key string) {
 // load by Loader
 // TODO singleFlight
 func (m *RistrettoCache) load(key string) (value interface{}, found bool) {
+	if m.loader == nil {
+		return nil, false
+	}
 	v, err := m.sf.Do(key, func() (interface{}, error) {
 		value, ttl, err := m.loader.Load(key)
 		if err == nil && value != nil {

@@ -73,6 +73,9 @@ func (m *StdMapCache) update(key string) {
 
 // load by Loader
 func (m *StdMapCache) load(key string) (value interface{}, found bool) {
+	if m.loader == nil {
+		return nil, false
+	}
 	v, err := m.sf.Do(key, func() (interface{}, error) {
 		value, ttl, err := m.loader.Load(key)
 		if err == nil && value != nil {
