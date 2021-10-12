@@ -42,6 +42,7 @@ ristretto, err := ristretto.NewCache(&ristretto.Config{
 		panic(err)
 	}
 cache := memcache.NewWithRistretto(memcache.LoaderFunc(load), time.Millisecond*20, ristretto)
+time.Sleep(time.Millisecond * 2) // only for ristretto
 cache.SetWithTTL("item-2", &Item{100}, time.Millisecond*10)
 v, ok := cache.Get("item-2")
 ```
