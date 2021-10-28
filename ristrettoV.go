@@ -39,7 +39,11 @@ func (m *RistrettoCache) Set(key string, value interface{}) {
 func (m *RistrettoCache) SetWithTTL(key string, value interface{}, ttl time.Duration) {
 
 	item := ristrettoItem{value, ttl, time.Now()}
-	m.Ristretto.Set(key, item, 1)
+	if m.notUsedExpiredDataAfterDur == 0 {
+		m.Ristretto.Set(key, item, 1)
+	} else {
+		m.Ristretto.SetWithTTL(key, item, 1, m.notUsedExpiredDataAfterDur)
+	}
 }
 
 // if data is expired return the old one and lazy load with Loader
@@ -50,11 +54,6 @@ func (m *RistrettoCache) Get(key string) (value interface{}, found bool) {
 		// key doesn't exist in cache, need load
 		return m.load(key)
 	}
-	if v.ttl != 0 && time.Now().After(v.updateAt.Add(m.notUsedExpiredDataAfterDur)) {
-		// it's too old, need load
-		return m.load(key)
-	}
-
 	// update expired data
 	if v.ttl != 0 && time.Now().After(v.updateAt.Add(v.ttl)) {
 		go m.update(key)
@@ -68,7 +67,6 @@ func (m *RistrettoCache) update(key string) {
 }
 
 // load by Loader
-// TODO singleFlight
 func (m *RistrettoCache) load(key string) (value interface{}, found bool) {
 	if m.loader == nil {
 		return nil, false

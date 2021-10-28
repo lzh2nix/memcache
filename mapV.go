@@ -53,8 +53,7 @@ func (m *StdMapCache) Get(key string) (value interface{}, found bool) {
 		// key doesn't exist in cache, need load
 		return m.load(key)
 	}
-
-	if v.ttl != 0 && time.Now().After(v.updateAt.Add(m.notUsedExpiredDataAfterDur)) {
+	if m.notUsedExpiredDataAfterDur != 0 && time.Now().After(v.updateAt.Add(m.notUsedExpiredDataAfterDur)) {
 		// it's too old, need load
 		return m.load(key)
 	}

@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/dgraph-io/ristretto"
-	"github.com/lzh2nix/memcache"
 	"github.com/stretchr/testify/require"
+
+	"qiniu.com/fusionartisan/dn_scheduler/database/mem/memcache"
 )
 
 type Item struct {
@@ -88,10 +89,22 @@ func test(t *testing.T, c memcache.Cache) {
 		v, ok := c.Get("item-4")
 		ast.True(ok)
 		ast.Equal(v.(*Item).I, 200)
-		time.Sleep(time.Millisecond * 20)
+		time.Sleep(time.Millisecond * 22)
 		v, ok = c.Get("item-4")
 		ast.True(ok)
+		ast.Equal(v.(*Item).I, 4)
+	}
+	{
+		c.SetWithTTL("item-4", &Item{200}, time.Millisecond*10)
+		time.Sleep(time.Millisecond * 2)
+
+		v, ok := c.Get("item-4")
+		ast.True(ok)
 		ast.Equal(v.(*Item).I, 200)
+		time.Sleep(time.Millisecond * 22)
+		v, ok = c.Get("item-4")
+		ast.True(ok)
+		ast.Equal(v.(*Item).I, 4)
 	}
 	{
 		c.Set("item-100000", &Item{10000})
